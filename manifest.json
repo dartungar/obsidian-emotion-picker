@@ -1,10 +1,10 @@
 {
-	"id": "obsidian-sample-plugin",
-	"name": "Sample Plugin",
-	"version": "1.0.1",
+	"id": "obsidian-emotion-picker",
+	"name": "Emotion Picker",
+	"version": "0.1.0",
 	"minAppVersion": "0.12.0",
-	"description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
+	"description": "A plugin for Obsidian.md that lets you choose an emotion from a list to insert into a note.",
+	"author": "dartungar",
+	"authorUrl": "https://dartungar.com",
 	"isDesktopOnly": false
 }

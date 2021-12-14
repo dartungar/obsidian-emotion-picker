@@ -1,4 +1,34 @@
-/* Sets all the text color to red! */
-body {
-    color: red;
+/* override default Modal styles */
+.modal {
+	min-width: 230px !important;
+}
+
+.modal-body > div {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+.emotion-toggle-label {
+	position: relative;
+	padding-left: 5px;
+	bottom: 5px;
+}
+
+.emotion-section {
+	padding: 0.5rem;
+	width: 130px;
+}
+
+.emotion-element {
+	text-decoration: underline solid 1px;
+	cursor: pointer;
+	transition: linear 0.1s;
+}
+
+.emotion-element:hover {
+	/* text-decoration: underline solid 1px; */
+	font-size: 103%;
+	text-decoration: underline solid 2px;
 }

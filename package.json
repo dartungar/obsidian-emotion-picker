@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "obsidian-emotion-picker",
 	"version": "0.12.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "A plugin for Obsidian.md that lets you choose an emotion from a list to insert into a note.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
