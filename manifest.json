@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-emotion-picker",
 	"name": "Emotion Picker",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"minAppVersion": "0.12.0",
 	"description": "A plugin for Obsidian.md that lets you choose an emotion from a list to insert into a note.",
 	"author": "dartungar",
