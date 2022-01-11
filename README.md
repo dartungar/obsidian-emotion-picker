@@ -1,6 +1,6 @@
 ## Obsidian Emotion Picker
 
-Paste an emotion / feeling into note, using convenient list of emotions, divided into five categories:
+Paste an emotion / feeling into note, using convenient list of emotions, divided into six categories:
 
 -   Joy
 -   Love
