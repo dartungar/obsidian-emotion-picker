@@ -1,4 +1,11 @@
-import { App, Modal, MarkdownView, Notice } from "obsidian";
+import {
+	App,
+	Modal,
+	MarkdownView,
+	Notice,
+	EditorPosition,
+	Editor,
+} from "obsidian";
 import { Emotions } from "./emotions/Emotions";
 import { EmotionSection } from "./emotions/EmotionSection";
 
@@ -7,6 +14,8 @@ export class EmotionPickerModal extends Modal {
 	content: HTMLElement;
 	emotions: Emotions;
 	useCommaInSeparator = false;
+	editor: Editor;
+	initialCursorPosition: EditorPosition;
 
 	constructor(app: App) {
 		super(app);
@@ -21,11 +30,21 @@ export class EmotionPickerModal extends Modal {
 		this.generateHeading();
 		this.generateToggles();
 		this.generateContentFromEmotions();
+
+		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (view) {
+			this.editor = view.editor;
+			this.initialCursorPosition = this.editor.getCursor();
+		} else {
+			new Notice(`Error getting cursor position.`);
+			this.close();
+		}
 	}
 
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
+		this.initialCursorPosition = undefined;
 	}
 
 	generateHeading(): void {
@@ -79,10 +98,10 @@ export class EmotionPickerModal extends Modal {
 	}
 
 	insertText(text: string): void {
-		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-		if (view) {
-			const editor = view.editor;
-			editor.replaceRange(text, editor.getCursor());
+		if (this.editor) {
+			this.editor.replaceRange(text, this.initialCursorPosition);
+			this.initialCursorPosition.ch += text.length;
+			console.log(this.initialCursorPosition.ch);
 		}
 
 		new Notice(`Inserted '${text}'.`);
