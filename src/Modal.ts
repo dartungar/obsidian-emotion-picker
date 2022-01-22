@@ -14,6 +14,8 @@ export class EmotionPickerModal extends Modal {
 	content: HTMLElement;
 	emotions: Emotions;
 	useCommaInSeparator = false;
+	addAsLink = false;
+	addAsTag = false;
 	editor: Editor;
 	initialCursorPosition: EditorPosition;
 
@@ -62,6 +64,22 @@ export class EmotionPickerModal extends Modal {
 		useCommaToggleEl.onClickEvent(() => {
 			this.useCommaInSeparator = !this.useCommaInSeparator;
 		});
+
+		const addAsLinkToggleEl = this.generateToggleElement(
+			togglesEl,
+			"add as [[link]]"
+		);
+		addAsLinkToggleEl.onClickEvent(() => {
+			this.addAsLink = !this.addAsLink;
+		});
+
+		const addAsTagToggleEl = this.generateToggleElement(
+			togglesEl,
+			"add as #tag"
+		);
+		addAsTagToggleEl.onClickEvent(() => {
+			this.addAsTag = !this.addAsTag;
+		});
 	}
 
 	generateContentFromEmotions(): void {
@@ -90,9 +108,7 @@ export class EmotionPickerModal extends Modal {
 			emotionEl.style.textDecorationColor = section.color;
 			emotionEl.classList.add("emotion-element");
 			emotionEl.onClickEvent(() => {
-				this.insertText(
-					" " + emotionString + (this.useCommaInSeparator ? "," : "")
-				);
+				this.insertText(this.getFinalText(emotionString));
 			});
 		});
 	}
@@ -118,5 +134,14 @@ export class EmotionPickerModal extends Modal {
 		labelEl.textContent = text;
 
 		return toggleContainerEl;
+	}
+
+	getFinalText(text: string): string {
+		text = " " + text;
+		// TODO: various options like [[text]], #text
+		if (this.addAsTag) text = `#${text}`;
+		if (this.addAsLink) text = `[[${text}]]`;
+		if (this.useCommaInSeparator) text = text + ", ";
+		return text;
 	}
 }
