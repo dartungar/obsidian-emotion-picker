@@ -1,3 +1,4 @@
+import EmotionPickerPlugin from "main";
 import {
 	App,
 	Modal,
@@ -8,25 +9,28 @@ import {
 } from "obsidian";
 import { Emotions } from "./emotions/Emotions";
 import { EmotionSection } from "./emotions/EmotionSection";
+import { EmotionPickerSettings } from "./PluginSettings";
 
 export class EmotionPickerModal extends Modal {
 	app: App;
+	plugin: EmotionPickerPlugin;
 	content: HTMLElement;
 	emotions: Emotions;
-	useCommaInSeparator = false;
-	addAsLink = false;
-	addAsTag = false;
 	editor: Editor;
 	initialCursorPosition: EditorPosition;
+	// current settings
+	state: EmotionPickerSettings;
 
-	constructor(app: App) {
+	constructor(app: App, plugin: EmotionPickerPlugin) {
 		super(app);
 		this.app = app;
+		this.plugin = plugin;
 		this.emotions = new Emotions();
 	}
 
 	onOpen() {
 		const { contentEl } = this;
+		this.state = this.plugin.settings;
 		contentEl.classList.add("modal-body");
 
 		this.generateHeading();
@@ -59,26 +63,29 @@ export class EmotionPickerModal extends Modal {
 
 		const useCommaToggleEl = this.generateToggleElement(
 			togglesEl,
-			"add comma after"
+			"add comma after",
+			this.state.useCommaInSeparator
 		);
 		useCommaToggleEl.onClickEvent(() => {
-			this.useCommaInSeparator = !this.useCommaInSeparator;
+			this.state.useCommaInSeparator = !this.state.useCommaInSeparator;
 		});
 
 		const addAsLinkToggleEl = this.generateToggleElement(
 			togglesEl,
-			"add as [[link]]"
+			"add as [[link]]",
+			this.state.addAsLink
 		);
 		addAsLinkToggleEl.onClickEvent(() => {
-			this.addAsLink = !this.addAsLink;
+			this.state.addAsLink = !this.state.addAsLink;
 		});
 
 		const addAsTagToggleEl = this.generateToggleElement(
 			togglesEl,
-			"add as #tag"
+			"add as #tag",
+			this.state.addAsTag
 		);
 		addAsTagToggleEl.onClickEvent(() => {
-			this.addAsTag = !this.addAsTag;
+			this.state.addAsTag = !this.state.addAsTag;
 		});
 	}
 
@@ -117,17 +124,25 @@ export class EmotionPickerModal extends Modal {
 		if (this.editor) {
 			this.editor.replaceRange(text, this.initialCursorPosition);
 			this.initialCursorPosition.ch += text.length;
-			console.log(this.initialCursorPosition.ch);
 		}
 
 		new Notice(`Inserted '${text}'.`);
 	}
 
-	generateToggleElement(baseEl: HTMLElement, text: string): HTMLDivElement {
+	generateToggleElement(
+		baseEl: HTMLElement,
+		text: string,
+		initialState = false
+	): HTMLDivElement {
 		const toggleContainerEl = baseEl.createDiv();
+
 		const toggleEl = toggleContainerEl.createDiv();
 		toggleEl.classList.add("checkbox-container");
 		toggleEl.onClickEvent(() => toggleEl.classList.toggle("is-enabled"));
+
+		if (initialState == true) {
+			toggleEl.classList.add("is-enabled");
+		}
 
 		const labelEl = toggleContainerEl.createEl("span");
 		labelEl.classList.add("emotion-toggle-label");
@@ -137,11 +152,17 @@ export class EmotionPickerModal extends Modal {
 	}
 
 	getFinalText(text: string): string {
-		text = " " + text;
 		// TODO: various options like [[text]], #text
-		if (this.addAsTag) text = `#${text}`;
-		if (this.addAsLink) text = `[[${text}]]`;
-		if (this.useCommaInSeparator) text = text + ", ";
+		console.log(this.plugin.settings);
+		if (this.state.capitalize) text = this.capitalize(text);
+		if (this.state.addAsTag) text = `#${text}`;
+		if (this.state.addAsLink) text = `[[${text}]]`;
+		if (this.state.useCommaInSeparator) text = text + ", ";
+		text = " " + text;
 		return text;
+	}
+
+	capitalize(text: string): string {
+		return text.charAt(0).toUpperCase() + text.slice(1);
 	}
 }
