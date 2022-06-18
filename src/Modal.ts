@@ -7,15 +7,14 @@ import {
 	EditorPosition,
 	Editor,
 } from "obsidian";
-import { Emotions } from "./emotions/Emotions";
 import { EmotionSection } from "./emotions/EmotionSection";
-import { EmotionPickerSettings } from "./PluginSettings";
+import { EmotionPickerSettings } from "./settings/PluginSettings";
 
 export class EmotionPickerModal extends Modal {
 	app: App;
 	plugin: EmotionPickerPlugin;
 	content: HTMLElement;
-	emotions: Emotions;
+	emotions: EmotionSection[];
 	editor: Editor;
 	initialCursorPosition: EditorPosition;
 	// current settings
@@ -25,7 +24,7 @@ export class EmotionPickerModal extends Modal {
 		super(app);
 		this.app = app;
 		this.plugin = plugin;
-		this.emotions = new Emotions();
+		this.emotions = plugin.settings.emotions;
 	}
 
 	onOpen() {
@@ -55,11 +54,12 @@ export class EmotionPickerModal extends Modal {
 
 	generateHeading(): void {
 		const headingEl = this.contentEl.createEl("h3");
-		headingEl.innerText = "How do you feel?";
+		headingEl.innerText = this.plugin.settings.modalHeaderText;
 	}
 
 	generateToggles(): void {
 		const togglesEl = this.contentEl.createDiv();
+		togglesEl.addClass("toggles-section")
 
 		const useCommaToggleEl = this.generateToggleElement(
 			togglesEl,
@@ -92,7 +92,7 @@ export class EmotionPickerModal extends Modal {
 	generateContentFromEmotions(): void {
 		const contentEl = this.contentEl.createDiv();
 
-		this.emotions.emotionSections.forEach((section) => {
+		this.emotions.forEach((section) => {
 			this.generateElementFromEmotionSection(section, contentEl);
 		});
 	}

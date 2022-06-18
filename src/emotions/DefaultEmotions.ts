@@ -1,5 +1,6 @@
-export const sectionsData = [
+export const DEFAULT_EMOTIONS = [
 	{
+		id: 1,
 		name: "Joy",
 		color: "#c1e08d",
 		emotions: [
@@ -25,6 +26,7 @@ export const sectionsData = [
 		],
 	},
 	{
+		id: 2,
 		name: "Love",
 		color: "#e8c3da",
 		emotions: [
@@ -41,6 +43,7 @@ export const sectionsData = [
 		],
 	},
 	{
+		id: 3,
 		name: "Surprise",
 		color: "#94d4d3",
 		emotions: [
@@ -57,6 +60,7 @@ export const sectionsData = [
 		],
 	},
 	{
+		id: 4,
 		name: "Anger",
 		color: "#b84444",
 		emotions: [
@@ -76,6 +80,7 @@ export const sectionsData = [
 		],
 	},
 	{
+		id: 5,
 		name: "Sadness",
 		color: "#4e72a3",
 		emotions: [
@@ -99,6 +104,7 @@ export const sectionsData = [
 		],
 	},
 	{
+		id: 6,
 		name: "Fear",
 		color: "#dbab4b",
 		emotions: [

@@ -1,13 +1,6 @@
 ## Obsidian Emotion Picker
 
-Paste an emotion / feeling into note, using convenient list of emotions, divided into six categories:
-
--   Joy
--   Love
--   Surprise
--   Anger
--   Sadness
--   Fear
+Paste an emotion / feeling into note, using customizable list of emotions (or sensible default one).
 
 Click on an emotion to insert it as text at the current cursor position.
 
@@ -16,6 +9,7 @@ Available options (default values can be set in Settings tab):
 -   add comma after (convenient if entering more than one emotion)
 -   insert as [[link]]
 -   insert as #tag
+-   capitalize wort
 
 ![Plugin overview](./emotion-picker.png "Plugin overview")
 
