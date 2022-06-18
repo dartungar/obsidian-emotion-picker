@@ -9,7 +9,7 @@ Available options (default values can be set in Settings tab):
 -   add comma after (convenient if entering more than one emotion)
 -   insert as [[link]]
 -   insert as #tag
--   capitalize wort
+-   capitalize the word before inserting
 
 ![Plugin overview](./emotion-picker.png "Plugin overview")
 
