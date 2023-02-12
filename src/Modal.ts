@@ -17,6 +17,7 @@ export class EmotionPickerModal extends Modal {
 	emotions: EmotionSection[];
 	editor: Editor;
 	initialCursorPosition: EditorPosition;
+	locale: string;
 	// current settings
 	state: EmotionPickerSettings;
 
@@ -24,7 +25,8 @@ export class EmotionPickerModal extends Modal {
 		super(app);
 		this.app = app;
 		this.plugin = plugin;
-		this.emotions = plugin.settings.emotions;
+		this.locale = this.plugin.settings.locale;
+		this.emotions = plugin.settings.setEmotions(this.locale);
 	}
 
 	onOpen() {
@@ -59,7 +61,7 @@ export class EmotionPickerModal extends Modal {
 
 	generateToggles(): void {
 		const togglesEl = this.contentEl.createDiv();
-		togglesEl.addClass("toggles-section")
+		togglesEl.addClass("toggles-section");
 
 		const useCommaToggleEl = this.generateToggleElement(
 			togglesEl,
