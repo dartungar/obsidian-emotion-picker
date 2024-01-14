@@ -76,7 +76,7 @@ export const DEFAULT_EMOTIONS = [
 			"envious",
 			"jealous",
 			"disgusted",
-			"contemptful ",
+			"contemptful",
 		],
 	},
 	{
