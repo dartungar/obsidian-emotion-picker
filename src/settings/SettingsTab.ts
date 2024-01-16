@@ -1,12 +1,16 @@
-import EmotionPickerPlugin from "../../main";
 import { App, PluginSettingTab, Setting } from "obsidian";
-
+import { locales } from "../emotions/locale/Locales";
+import EmotionPickerPlugin from "../../main";
+import { EmotionPickerLocaleOverride } from "./PluginSettings";
 export class EmotionPickerSettingsTab extends PluginSettingTab {
 	plugin: EmotionPickerPlugin;
 
 	constructor(app: App, plugin: EmotionPickerPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
+		this.plugin.settings.emotions = plugin.settings.setEmotions(
+			this.plugin.settings.locale
+		);
 	}
 
 	refresh(): void {
@@ -18,20 +22,20 @@ export class EmotionPickerSettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', { text: 'Emotion Picker Settings' });
+		containerEl.createEl("h2", { text: "Emotion Picker Settings" });
 
 		// TODO: customize modal header
 
 		new Setting(containerEl)
-		.setName("Modal header text")
-		.setDesc("Customize modal header text")
-		.addText((textField) => {
-			textField.setValue(this.plugin.settings.modalHeaderText);
-			textField.onChange(newValue => {
-				this.plugin.settings.modalHeaderText = newValue;
-				this.plugin.saveSettings();
-			})
-		})
+			.setName("Modal header text")
+			.setDesc("Customize modal header text")
+			.addText((textField) => {
+				textField.setValue(this.plugin.settings.modalHeaderText);
+				textField.onChange((newValue) => {
+					this.plugin.settings.modalHeaderText = newValue;
+					this.plugin.saveSettings();
+				});
+			});
 
 		new Setting(containerEl)
 			.setName("Add comma after")
@@ -81,95 +85,126 @@ export class EmotionPickerSettingsTab extends PluginSettingTab {
 					})
 			);
 
-		containerEl.createEl('h3', { text: 'Emotion groups' });
+		new Setting(this.containerEl)
+			.setName("Override locale:")
+			.setDesc(
+				"Set this if you want to use a locale different from the default"
+			)
+			.addDropdown((dropdown) => {
+				locales.forEach((locale) => {
+					dropdown.addOption(locale, locale);
+				});
+				dropdown.setValue(this.plugin.settings.locale);
+				dropdown.onChange(async (value) => {
+					this.plugin.settings.locale =
+						value as EmotionPickerLocaleOverride;
+					this.plugin.settings.emotions =
+						this.plugin.settings.setEmotions(value);
+					await this.plugin.saveSettings();
+					this.refresh();
+				});
+			});
 
-
+		containerEl.createEl("h3", { text: "Emotion groups" });
 
 		// TODO: refresh settings page after saving
 
-		this.plugin.settings.emotions.forEach(es => {
-
+		this.plugin.settings.emotions.forEach((es) => {
 			const setting = new Setting(containerEl);
 			setting.setClass("emotion-section-setting");
-			
-			const groupNameLabel = createEl("span", {text: "Name: "});
+
+			const groupNameLabel = createEl("span", { text: "Name: " });
 			setting.controlEl.appendChild(groupNameLabel);
-			
-			setting.addText(textField => {
-				textField.setValue(es.name)
-				.setPlaceholder("group name")
-				.onChange(value => {
-					es.name = value;
-					this.plugin.saveSettings;
-				})
+
+			setting.addText((textField) => {
+				textField
+					.setValue(es.name)
+					.setPlaceholder("group name")
+					.onChange((value) => {
+						es.name = value;
+						this.plugin.saveSettings;
+					});
 			});
 
-			const colorPickerLabel = createEl("span", {text: "Color: "});
+			const colorPickerLabel = createEl("span", { text: "Color: " });
 			setting.controlEl.appendChild(colorPickerLabel);
 
-			const colorPicker = createEl("input", {
-				type: "color",
-				cls: "settings-color-picker"
-			}, el => {
-				el.value = es.color;
-				el.onchange = () => {
-					es.color = el.value;
-					this.plugin.saveSettings();
+			const colorPicker = createEl(
+				"input",
+				{
+					type: "color",
+					cls: "settings-color-picker",
+				},
+				(el) => {
+					el.value = es.color;
+					el.onchange = () => {
+						es.color = el.value;
+						this.plugin.saveSettings();
+					};
 				}
-			})
+			);
 
 			setting.controlEl.appendChild(colorPicker);
 
-			const emotionsListLabel = createEl("span", {text: "Emotions:"});
+			const emotionsListLabel = createEl("span", {
+				text: "Emotions:",
+			});
 			setting.controlEl.appendChild(emotionsListLabel);
 
-			setting.addTextArea(textArea => {
-				textArea.inputEl.setAttribute("rows", es.emotions.length.toString());
+			setting.addTextArea((textArea) => {
+				textArea.inputEl.setAttribute(
+					"rows",
+					es.emotions.length.toString()
+				);
 
-				textArea.setPlaceholder("emotions, separated by newline or comma.")
-				.setValue(es.emotions.join("\n"))
-				.onChange(async (value) => {
-					es.emotions = splitByCommaAndNewline(value);
-					this.plugin.saveSettings();
-				})
-			})
+				textArea
+					.setPlaceholder("emotions, separated by newline or comma.")
+					.setValue(es.emotions.join("\n"))
+					.onChange(async (value) => {
+						es.emotions = splitByCommaAndNewline(value);
+						this.plugin.saveSettings();
+					});
+			});
 
-			setting.addButton(btn => {
+			setting.addButton((btn) => {
 				btn.setButtonText("delete group");
-				btn.setClass("settings-delete-btn")
+				btn.setClass("settings-delete-btn");
 				btn.onClick(() => {
-					this.plugin.settings.emotions = this.plugin.settings.emotions.filter(e => e.id !== es.id);
+					this.plugin.settings.emotions =
+						this.plugin.settings.emotions.filter(
+							(e) => e.id !== es.id
+						);
 					this.plugin.saveSettings();
 					this.refresh();
 				});
-			})
+			});
+		});
 
-		})
-
-		new Setting(containerEl)
-		.addButton(btn => {
+		new Setting(containerEl).addButton((btn) => {
 			btn.setButtonText("Add group");
 			btn.onClick(() => {
 				this.plugin.settings.emotions.push({
-					id: Math.max(...this.plugin.settings.emotions.map(e => e.id)) + 1, // id "generation"
+					id:
+						Math.max(
+							...this.plugin.settings.emotions.map((e) => e.id)
+						) + 1, // id "generation"
 					name: "New section",
 					emotions: [],
-					color: "#000000"
+					color: "#000000",
 				});
 				this.plugin.saveSettings();
 				this.refresh();
 			});
-		})
+		});
 	}
 }
 
 function splitByCommaAndNewline(rawEmotions: string): string[] {
 	const splitted: string[] = [];
 
-	rawEmotions.split("\n").forEach(
-		s => s.split(",").forEach(
-			sp => splitted.push(sp.trim())
-			));
+	rawEmotions
+		.split("\n")
+		.forEach((s) => s.split(",").forEach((sp) => splitted.push(sp.trim())));
 
 	return splitted;
 }
