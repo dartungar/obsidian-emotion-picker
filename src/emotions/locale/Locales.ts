@@ -1,3 +1,3 @@
-const locales = ["en", "sv"];
+const locales = ["en", "sv", "es"];
 
 export { locales };
