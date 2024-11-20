@@ -1,4 +1,4 @@
-export const DEFAULT_EMOTIONS = [
+export const DEFAULT_SPANISH_EMOTIONS = [
 	{
 		id: 1,
 		name: "Alegría",
