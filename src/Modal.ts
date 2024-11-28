@@ -26,7 +26,7 @@ export class EmotionPickerModal extends Modal {
 		this.app = app;
 		this.plugin = plugin;
 		this.locale = this.plugin.settings.locale;
-		this.emotions = plugin.settings.setEmotions(this.locale);
+		this.emotions = plugin.getEmotionsOrDefault();
 	}
 
 	onOpen() {
@@ -154,8 +154,6 @@ export class EmotionPickerModal extends Modal {
 	}
 
 	getFinalText(text: string): string {
-		// TODO: various options like [[text]], #text
-		console.log(this.plugin.settings);
 		if (this.state.capitalize) text = this.capitalize(text);
 		if (this.state.addAsTag) text = `#${text}`;
 		if (this.state.addAsLink) text = `[[${text}]]`;

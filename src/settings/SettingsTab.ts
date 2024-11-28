@@ -2,15 +2,14 @@ import { App, PluginSettingTab, Setting } from "obsidian";
 import { locales } from "../emotions/locale/Locales";
 import EmotionPickerPlugin from "../../main";
 import { EmotionPickerLocaleOverride } from "./PluginSettings";
+import { getDefaultEmotions } from "src/emotions";
 export class EmotionPickerSettingsTab extends PluginSettingTab {
 	plugin: EmotionPickerPlugin;
 
 	constructor(app: App, plugin: EmotionPickerPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
-		this.plugin.settings.emotions = plugin.settings.setEmotions(
-			this.plugin.settings.locale
-		);
+		this.plugin.settings.emotions = plugin.getEmotionsOrDefault();
 	}
 
 	refresh(): void {
@@ -88,7 +87,7 @@ export class EmotionPickerSettingsTab extends PluginSettingTab {
 		new Setting(this.containerEl)
 			.setName("Override locale:")
 			.setDesc(
-				"Set this if you want to use a locale different from the default"
+				"Set this if you want to use a locale different from the default. \nWARNING: changing locale will erase your custom emotions for current locale!"
 			)
 			.addDropdown((dropdown) => {
 				locales.forEach((locale) => {
@@ -96,12 +95,13 @@ export class EmotionPickerSettingsTab extends PluginSettingTab {
 				});
 				dropdown.setValue(this.plugin.settings.locale);
 				dropdown.onChange(async (value) => {
-					this.plugin.settings.locale =
-						value as EmotionPickerLocaleOverride;
-					this.plugin.settings.emotions =
-						this.plugin.settings.setEmotions(value);
-					await this.plugin.saveSettings();
-					this.refresh();
+					const isLocaleChanged = value !== this.plugin.settings.locale;
+					if (isLocaleChanged) {
+						this.plugin.settings.locale = value as EmotionPickerLocaleOverride;
+						this.plugin.settings.emotions =	getDefaultEmotions(value);
+						await this.plugin.saveSettings();
+						this.refresh();
+					}
 				});
 			});
 
@@ -122,7 +122,7 @@ export class EmotionPickerSettingsTab extends PluginSettingTab {
 					.setPlaceholder("group name")
 					.onChange((value) => {
 						es.name = value;
-						this.plugin.saveSettings;
+						this.plugin.saveSettings();
 					});
 			});
 
@@ -208,3 +208,4 @@ function splitByCommaAndNewline(rawEmotions: string): string[] {
 
 	return splitted;
 }
+

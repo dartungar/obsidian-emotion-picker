@@ -3,7 +3,9 @@ import { DEFAULT_EMOTIONS } from "./DefaultEmotions";
 import { DEFAULT_SWEDISH_EMOTIONS } from "./locale/sv/DefaultEmotions";
 import { DEFAULT_SPANISH_EMOTIONS } from "./locale/es/DefaultEmotions";
 
-const getEmotions = (locale: string): EmotionSection[] => {
+
+
+const getDefaultEmotions = (locale: string): EmotionSection[] => {
 	switch (locale) {
 		case "sv":
 			return DEFAULT_SWEDISH_EMOTIONS;
@@ -19,5 +21,5 @@ export {
 	DEFAULT_SWEDISH_EMOTIONS,
 	DEFAULT_SPANISH_EMOTIONS,
 	EmotionSection,
-	getEmotions,
+	getDefaultEmotions,
 };

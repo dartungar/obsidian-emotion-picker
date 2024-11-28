@@ -1,4 +1,4 @@
-import { DEFAULT_EMOTIONS, getEmotions } from "../emotions/index";
+import { DEFAULT_EMOTIONS } from "../emotions/index";
 import { EmotionSection } from "../emotions/EmotionSection";
 
 export type EmotionPickerLocaleOverride = "en" | string;
@@ -9,7 +9,6 @@ export interface EmotionPickerSettings {
 	addAsLink: boolean;
 	addAsTag: boolean;
 	capitalize: boolean;
-	setEmotions: (locale: string) => EmotionSection[];
 	emotions: EmotionSection[];
 	locale: EmotionPickerLocaleOverride;
 }
@@ -20,7 +19,6 @@ export class DefaultSettings implements EmotionPickerSettings {
 	addAsLink = false;
 	addAsTag = false;
 	capitalize = false;
-	setEmotions = getEmotions;
 	emotions = DEFAULT_EMOTIONS;
 	locale: "en";
 }
